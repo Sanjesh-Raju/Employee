@@ -6,7 +6,7 @@ ENV LANG=C.UTF-8 \
     PYTHONUNBUFFERED=1 \
     FRAPPE_ENV=production
 
-# Install system dependencies (without wkhtmltopdf yet)
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -22,26 +22,31 @@ RUN apt-get update && apt-get install -y \
     libxcb1 \
     libxext6 \
     libxrender1 \
+    default-libmysqlclient-dev \
+    python3-dev \
+    pkg-config \
     && npm install -g yarn \
     && apt-get clean
 
-RUN wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.buster_amd64.deb && \
+# Install wkhtmltopdf (stable Buster version)
+RUN wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.buster_amd64.deb && \
     dpkg -i wkhtmltox_0.12.6-1.buster_amd64.deb || true && \
     apt-get install -f -y && \
     rm wkhtmltox_0.12.6-1.buster_amd64.deb
-
-
 
 # Create frappe user
 RUN useradd -ms /bin/bash frappe
 WORKDIR /home/frappe
 
-# Copy repo
+# Copy your Frappe project
 COPY . /home/frappe/frappe-bench
 WORKDIR /home/frappe/frappe-bench
 
-# Install Python dependencies
+# Upgrade pip and install bench
 RUN pip install --upgrade pip
+RUN pip install frappe-bench==5.25.9
+
+# Install Python dependencies
 RUN pip install -r requirements.txt
 
 # Setup bench
@@ -49,4 +54,6 @@ RUN bench setup requirements
 RUN bench build
 
 EXPOSE 8000
+
+# Start bench
 CMD ["bench", "start"]

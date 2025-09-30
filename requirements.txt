@@ -1,0 +1,2 @@
+frappe-bench==2025.09.1  # replace with your Frappe version
+mysqlclient      

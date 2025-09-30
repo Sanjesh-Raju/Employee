@@ -25,12 +25,11 @@ RUN apt-get update && apt-get install -y \
     && npm install -g yarn \
     && apt-get clean
 
-# Install wkhtmltopdf from precompiled .deb
-# Install wkhtmltopdf from a working deb
-RUN wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.bullseye_amd64.deb && \
-    dpkg -i wkhtmltox_0.12.6-1.bullseye_amd64.deb || true && \
+RUN wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.buster_amd64.deb && \
+    dpkg -i wkhtmltox_0.12.6-1.buster_amd64.deb || true && \
     apt-get install -f -y && \
-    rm wkhtmltox_0.12.6-1.bullseye_amd64.deb
+    rm wkhtmltox_0.12.6-1.buster_amd64.deb
+
 
 
 # Create frappe user
